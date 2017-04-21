@@ -1,13 +1,15 @@
-5 #numbers of stat on the equipment files, write donw the names
-Intellect
-Critical Strike
-Haste
-Mastery
-Versatility
+#this is the setting file, you can comment with #
+5 #numbers of stat on the equipment files, write donw the names and their weight
+Intellect 0.1
+#
+Critical_Strike 0.5
+Haste 0.1
+Mastery 0.6
+Versatility 1
 2# number of equipment files, then name of them
 head.in
 chest.in
 #it's a montecarlo: input the "temeperature"
 100
-#then give a weight to each stat
-0.1 0.5 0.1 0.6 1
+#and the number of "steps"
+100
