@@ -4,6 +4,8 @@
 #@email: iximiel@gmail.com
 #@version:0.1
 #Enjoy
+from random import randint, uniform
+from math import exp
 
 f=open("Settings.in",'r')
 line=f.readline()
@@ -24,7 +26,7 @@ while n <Nstat:
 		data = line.split()
 		Stats.append(data[0])
 		Weight.append(float(data[1]))
-		n=n+1
+		n+=1
 		
 for n in range(0,Nstat):
 	print "*\t"+Stats[n]+"\tweight= "+str(Weight[n])
@@ -34,20 +36,20 @@ line=line.partition('#')[0]
 while not line:
 	line=f.readline()
 	line=line.partition('#')[0]
-Nfiles = int(line)
+Nequips = int(line)
 print "Files with the equipments:"
 n=0
 EquipFiles=[]
-while n <Nfiles:
+while n <Nequips:
 	line=f.readline()
 	line = line.partition('#')[0]
 	line = line.rstrip()
 	if line:
 		EquipFiles.append(line)
-		n=n+1
+		n+=1
 		
 		
-for n in range(0,Nfiles):
+for n in range(0,Nequips):
 	print "*\t"+EquipFiles[n]
 	
 line=f.readline()
@@ -63,6 +65,68 @@ while not line:
 	line=f.readline()
 	line=line.partition('#')[0]
 Nsteps=int(line)
-
+f.close()
 print "Temperature: "+str(MC_T)
 print "Steps: "+str(Nsteps)
+
+Equips=[]
+EquipRanges=[]
+#reading the equips files:
+for ef in EquipFiles:
+	tdata=[]
+	with open(ef,'r') as f:
+		for line in f:
+			line = line.split('#', 1)[0]
+			line = line.rstrip()
+			if line:
+				data = line.split()
+				tdata.append(data)
+	EquipRanges.append(len(tdata)-1)
+	Equips.append(tdata)
+'''
+for n in range(0,Nequips):
+	print "*\t"+EquipFiles[n]
+	print EquipRanges[n]
+	print Equips[n]
+'''
+OldEnergy=0.0
+BestCombination=[]
+for neq in range(0,Nequips):
+	tdata=Equips[neq]
+	rnd=randint(0,EquipRanges[neq])
+	BestCombination.append(rnd)
+	for n in range(1,Nstat+1):
+		OldEnergy+=float(tdata[rnd][n])*Weight[n-1]
+
+print "Starting equipment strenght: "+str(OldEnergy)
+while Nsteps>=0:
+	NewCombination = BestCombination
+	#select a type of gear
+	rndtype = randint(0,Nequips-1)
+	NewCombination[rndtype] = randint(0,EquipRanges[rndtype])
+	NewE=0.0
+	for neq in range(0,Nequips):
+		tdata=Equips[neq]
+		for n in range(1,Nstat+1):
+			NewE+=float(tdata[NewCombination[neq]][n])*Weight[n-1]
+	#montecarlo happens here:
+	#Delta is inverted because we are maximizing the Energy
+	deltaE = OldEnergy-NewE
+	if deltaE<0:
+		BestCombination = NewCombination
+		OldEnergy = NewE
+	else:
+		expAcc = exp(-deltaE/MC_T)
+		z = uniform(0.0,1.0)
+		if z < expAcc:
+			BestCombination = NewCombination
+			OldEnergy = NewE
+	Nsteps-=1
+
+print "Final equipment strenght: "+str(OldEnergy)
+print "Found a best combination:"
+for neq in range(0,Nequips):
+	tdata=Equips[neq]
+	print tdata[BestCombination[neq]][0]
+
+print "Run me another couple of times to see if it is really the best, try changing the \"temperature\""

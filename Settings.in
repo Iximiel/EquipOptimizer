@@ -10,6 +10,6 @@ Versatility 1
 head.in
 chest.in
 #it's a montecarlo: input the "temeperature"
-100
+1
 #and the number of "steps"
-100
+100000
