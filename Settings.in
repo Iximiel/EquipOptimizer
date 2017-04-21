@@ -1,0 +1,13 @@
+5 #numbers of stat on the equipment files, write donw the names
+Intellect
+Critical Strike
+Haste
+Mastery
+Versatility
+2# number of equipment files, then name of them
+head.in
+chest.in
+#it's a montecarlo: input the "temeperature"
+100
+#then give a weight to each stat
+0.1 0.5 0.1 0.6 1
