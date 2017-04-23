@@ -89,18 +89,24 @@ for n in range(0,Nequips):
 	print EquipRanges[n]
 	print Equips[n]
 '''
+#this is the "last accepted step"
 OldEnergy=0.0
-BestCombination=[]
+OldCombination=[]
 for neq in range(0,Nequips):
 	tdata=Equips[neq]
 	rnd=randint(0,EquipRanges[neq])
-	BestCombination.append(rnd)
+	OldCombination.append(rnd)
 	for n in range(1,Nstat+1):
 		OldEnergy+=float(tdata[rnd][n])*Weight[n-1]
-
+                
+#saving the best combination
+bestStep=0
+BestEnergy=OldEnergy
+BestCombination=OldCombination
 print "Starting equipment strenght: "+str(OldEnergy)
-while Nsteps>=0:
-	NewCombination = BestCombination
+step=0
+while step<=Nsteps:
+	NewCombination = OldCombination
 	#select a type of gear
 	rndtype = randint(0,Nequips-1)
 	NewCombination[rndtype] = randint(0,EquipRanges[rndtype])
@@ -112,21 +118,24 @@ while Nsteps>=0:
 	#montecarlo happens here:
 	#Delta is inverted because we are maximizing the Energy
 	deltaE = OldEnergy-NewE
-	if deltaE<0:
-		BestCombination = NewCombination
+	expAcc = exp(-deltaE/MC_T)
+	z = uniform(0.0,1.0)
+	if z < expAcc:
+		OldCombination = NewCombination
 		OldEnergy = NewE
-	else:
-		expAcc = exp(-deltaE/MC_T)
-		z = uniform(0.0,1.0)
-		if z < expAcc:
-			BestCombination = NewCombination
-			OldEnergy = NewE
-	Nsteps-=1
+                if OldEnergy > BestEnergy:
+                        #saving the best combination
+                        BestEnergy=OldEnergy
+                        BestCombination=OldCombination
+                        bestStep=step
 
-print "Final equipment strenght: "+str(OldEnergy)
+	step+=1
+
+print "Final equipment strenght: "+str(BestEnergy)
 print "Found a best combination:"
 for neq in range(0,Nequips):
 	tdata=Equips[neq]
-	print tdata[BestCombination[neq]][0]
-
+	print tdata[BestCombination[neq]]
+        
+print "Found at step " +str(bestStep)
 print "Run me another couple of times to see if it is really the best, try changing the \"temperature\""
