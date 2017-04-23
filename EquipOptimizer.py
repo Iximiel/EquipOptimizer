@@ -135,7 +135,21 @@ print "Final equipment strenght: "+str(BestEnergy)
 print "Found a best combination:"
 for neq in range(0,Nequips):
 	tdata=Equips[neq]
-	print tdata[BestCombination[neq]]
+        for i in range(0, Nstat+1):
+	        print tdata[BestCombination[neq]][i],
+        print
+
+print "Total:",
+for i in range(1, Nstat+1):
+        tot=0
+        for neq in range(0,Nequips):
+	        tdata=Equips[neq]
+	        tot+=int(tdata[BestCombination[neq]][i])
+        print tot,
+                
+print
+
+
         
 print "Found at step " +str(bestStep)
 print "Run me another couple of times to see if it is really the best, try changing the \"temperature\""
